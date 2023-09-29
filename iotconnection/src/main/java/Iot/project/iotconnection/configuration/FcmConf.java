@@ -14,7 +14,7 @@ import java.io.IOException;
 @Configuration
 public class FcmConf {
     @Value("${app.firebase-configuration-file}")
-    private String path = "fcm/iotnotification-b4c39-firebase-adminsdk-lqjm1-4800637901.json";
+    private String path = "fcm/e-senhealt-firebase-adminsdk-a42oy-a9ca0d2c0c.json";
     @Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
           GoogleCredentials credentials = GoogleCredentials.fromStream(

@@ -1,9 +1,6 @@
 package Iot.project.iotconnection.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="Links")
@@ -13,15 +10,18 @@ public class Links {
     @GeneratedValue
     private long id;
 
-    private String token;
-    private String topic;
+    @OneToMany
+    private User user;
+
+    @OneToMany
+    private Device device;
 
     public Links() {
     }
 
-    public Links(String token, String topic) {
-        this.token = token;
-        this.topic = topic;
+    public Links(User user, Device device) {
+        this.user = user;
+        this.device = device;
     }
 
     public long getId() {
@@ -32,19 +32,19 @@ public class Links {
         this.id = id;
     }
 
-    public String getToken() {
-        return token;
+    public User getUser() {
+        return user;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getTopic() {
-        return topic;
+    public Device getDevice() {
+        return device;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setDevice(Device device) {
+        this.device = device;
     }
 }

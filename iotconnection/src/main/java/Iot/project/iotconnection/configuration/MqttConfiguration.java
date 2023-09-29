@@ -1,8 +1,12 @@
 package Iot.project.iotconnection.configuration;
 
+import Iot.project.iotconnection.models.Device;
 import Iot.project.iotconnection.models.HutempTopic;
 import Iot.project.iotconnection.models.Links;
+import Iot.project.iotconnection.models.UserDevice;
+import Iot.project.iotconnection.repositories.DeviceRepo;
 import Iot.project.iotconnection.repositories.LinksRepo;
+import Iot.project.iotconnection.repositories.USerDeviceRepo;
 import Iot.project.iotconnection.service.FcmService;
 import lombok.SneakyThrows;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -29,6 +33,12 @@ public class MqttConfiguration {
     @Autowired
     FcmService fcmService;
 
+    @Autowired
+    private DeviceRepo deviceRepo;
+
+    @Autowired
+    private USerDeviceRepo userDeviceRepo;
+
     public MqttConfiguration(LinksRepo repo) {
         this.repo = repo;
     }
@@ -54,7 +64,7 @@ public class MqttConfiguration {
         adapter.setOutputChannel(mqttMsgChannel());
         return adapter;
     }
-    @Bean
+   /* @Bean
     @ServiceActivator(inputChannel = "mqttMsgChannel")
     public MessageHandler handler(){
         return new MessageHandler() {
@@ -62,24 +72,35 @@ public class MqttConfiguration {
             @Override
             public void handleMessage(Message<?> message) throws MessagingException {
                String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
-               Links link = (Links) repo.findLinksBytopic(topic).get(0);
-               String humidity="8",temperature="9";
+                Links link = null;
+                try {
+                    link = (Links) repo.findLinksBytopic(topic).get(0);
+                    if(link == null){
+                        System.out.println(" from topic : "+topic);
+                    }
+                }catch(Exception e){
+                    System.out.println("error BD");
+                }
+               String humidity="8",temperature="8",water = "8";
                 try{
-                    String[] arrOfStr = message.getPayload().toString().split(" : ", 4);
+                    String[] arrOfStr = message.getPayload().toString().split(" : ", 5);
                     humidity = arrOfStr[3];
+                    water = arrOfStr[4];
                     temperature = arrOfStr[1];
                 }catch(Exception e){
                     System.out.println(e);
                 }
-                HutempTopic note = new HutempTopic(humidity,temperature,topic.toString());
+                //long id_device = deviceRepo.findBytoken(topic).getId();
+                //UserDevice userDevice  = userDeviceRepo.findByIdDevice(id_device);
+                HutempTopic note = new HutempTopic(humidity,temperature,"userDevice.getName()",water);
                 fcmService.sendNoti(note, link.getToken());
 
                //setup firebase server to send notification to user's token
-               System.out.println("humidity : "+humidity+" temperature : "+temperature+" from topic : "+topic+" after that test we will send it to "+link.getToken());
+               System.out.println("humidity : "+humidity+" temperature : "+temperature+" from topic : "+topic+" after that test we will send it to "+link.getTopic());
 
             }
         };
-    }
+    }*/
     @Bean
     public MessageChannel mqttOutboundChannel(){
         return new DirectChannel();
